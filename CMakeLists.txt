@@ -5,6 +5,8 @@ project(pygsw LANGUAGES Fortran)
 # Specify position-independent code since we will build a shared library.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "Debug file extension" FORCE)
+
 add_subdirectory(extern/GSW-Fortran EXCLUDE_FROM_ALL)
 
 add_library(pygsw_ SHARED pygsw/__init__.py pygsw/__main__.py src/wrapper.F90)
