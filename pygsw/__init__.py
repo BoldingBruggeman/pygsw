@@ -42,9 +42,9 @@ CONTIGUOUS = str('CONTIGUOUS')
 
 # Access to model objects (variables, parameters, dependencies, couplings, model instances)
 pygsw_.calculate_pt.argtypes = [
-    ctypes.c_double,
-    ctypes.c_double,
     ctypes.c_int,
+    numpy.ctypeslib.ndpointer(dtype=ctypes.c_double, flags=CONTIGUOUS),
+    numpy.ctypeslib.ndpointer(dtype=ctypes.c_double, flags=CONTIGUOUS),
     numpy.ctypeslib.ndpointer(dtype=ctypes.c_double, flags=CONTIGUOUS),
     numpy.ctypeslib.ndpointer(dtype=ctypes.c_double, flags=CONTIGUOUS),
     numpy.ctypeslib.ndpointer(dtype=ctypes.c_double, flags=CONTIGUOUS),
@@ -53,11 +53,12 @@ pygsw_.calculate_pt.argtypes = [
 pygsw_.calculate_pt.restype = None
 
 def calculate_pt(long, lat, z, t, sp):
-    z = numpy.array(z, copy=False, dtype=float, order='C')
     t = numpy.array(t, copy=False, dtype=float, order='C')
     sp = numpy.array(sp, copy=False, dtype=float, order='C')
-    assert z.shape == t.shape
-    assert z.shape == sp.shape
-    pt = numpy.empty_like(z)
-    pygsw_.calculate_pt(long, lat, numpy.size(z), z, t, sp, pt)
+    assert t.shape == sp.shape
+    long = numpy.array(numpy.broadcast_to(long % 360., t.shape), copy=False, dtype=float, order='C')
+    lat = numpy.array(numpy.broadcast_to(lat, t.shape), copy=False, dtype=float, order='C')
+    z = numpy.array(numpy.broadcast_to(z, t.shape), copy=False, dtype=float, order='C')
+    pt = numpy.empty_like(t)
+    pygsw_.calculate_pt(t.size, long, lat, z, t, sp, pt)
     return pt

@@ -6,23 +6,25 @@ module pygsw_
 
 contains
 
-   subroutine calculate_pt(long, lat, n, z, t, sp, pt) bind(c)
+   subroutine calculate_pt(n, long, lat, z, t, sp, pt) bind(c)
 !DIR$ ATTRIBUTES DLLEXPORT :: calculate_pt
-      real(c_double), value, intent(in) :: long, lat
-      integer(c_int), value, intent(in) :: n
-      real(c_double), intent(in), target :: z, t, sp(*)
+      integer(c_int), intent(in),    value  :: n
+      real(c_double), intent(in),    target :: long(*), lat(*), z(*), t(*), sp(*)
       real(c_double), intent(inout), target :: pt(*)
 
-      real(c_double), pointer :: z_(:), t_(:), sp_(:), pt_(:)
-      real(c_double) :: sa(n), p(n)
+      real(c_double), pointer :: long_(:), lat_(:), z_(:), t_(:), sp_(:), pt_(:)
+      real(c_double), allocatable :: sa(:), p(:)
 
+      allocate(sa(n), p(n))
+      call c_f_pointer(c_loc(long), long_, (/n/))
+      call c_f_pointer(c_loc(lat), lat_, (/n/))
       call c_f_pointer(c_loc(z), z_, (/n/))
       call c_f_pointer(c_loc(t), t_, (/n/))
       call c_f_pointer(c_loc(sp), sp_, (/n/))
       call c_f_pointer(c_loc(pt), pt_, (/n/))
 
       p(:) = -z_(:) !gsw_p_from_z?
-      sa(:) = gsw_SA_from_SP(sp_(:), p(:), long, lat)
+      sa(:) = gsw_SA_from_SP(sp_(:), p(:), long_(:), lat_(:))
 ! sp     : Practical Salinity                              [unitless]
 ! p      : sea pressure                                    [dbar]
 ! long   : longitude                                       [DEG E]     
