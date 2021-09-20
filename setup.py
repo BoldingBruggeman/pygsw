@@ -22,7 +22,7 @@ setup(
     author_email='jorn@bolding-bruggeman.com',
     license='GPL',
     packages=['pygsw'],
-    package_data={'pygsw': ['*.so', '*.dll', '*.dylib']},
+    package_data={'pygsw': ['*.so', '*.dll', '*.dylib', '*.pyd']},
     cmdclass={'bdist_wheel': bdist_wheel},
     zip_safe=False
 )
