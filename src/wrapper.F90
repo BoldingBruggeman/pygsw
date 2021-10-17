@@ -7,28 +7,28 @@ module pygsw_
 
 contains
 
-   subroutine cgws_SA_from_SP(n, sp, p, long, lat, sa) bind(c)
+   subroutine cgsw_SA_from_SP(n, sp, p, long, lat, sa) bind(c)
       integer(c_int), intent(in), value  :: n
       real(c_double), intent(in)         :: sp(n), p(n), long(n), lat(n)
       real(c_double), intent(inout)      :: sa(n)
       sa(:) = gsw_sa_from_sp(sp(:), p(:), long(:), lat(:))
    end subroutine
 
-   subroutine cgws_pt0_from_t(n, sa, t, p, pt) bind(c)
+   subroutine cgsw_pt0_from_t(n, sa, t, p, pt) bind(c)
       integer(c_int), intent(in), value  :: n
       real(c_double), intent(in)         :: sa(n), t(n), p(n)
       real(c_double), intent(inout)      :: pt(n)
       pt(:) = gsw_pt0_from_t(sa(:), t(:), p(:))
    end subroutine
 
-   subroutine cgws_ct_from_pt(n, sa, pt, ct) bind(c)
+   subroutine cgsw_ct_from_pt(n, sa, pt, ct) bind(c)
       integer(c_int), intent(in), value  :: n
       real(c_double), intent(in)         :: sa(n), pt(n)
       real(c_double), intent(inout)      :: ct(n)
       ct(:) = gsw_ct_from_pt(sa, pt)
    end subroutine
 
-   subroutine cgws_nsquared_3d(nx, ny, nz, h, sa, ct, p, lat, n2) bind(c)
+   subroutine cgsw_nsquared_3d(nx, ny, nz, h, sa, ct, p, lat, n2) bind(c)
       ! This routine is essentially a 3D version of 1D (k-only) gsw_nsquared
       integer(c_int), intent(in), value :: nx, ny, nz
       real(c_double), intent(in) :: h(nx, ny, nz), sa(nx, ny, nz), ct(nx, ny, nz), p(nx, ny, nz), lat(nx, ny)
