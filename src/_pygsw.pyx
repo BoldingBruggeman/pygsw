@@ -39,5 +39,10 @@ def ct_from_pt(const double[::1] SA not None, const double[::1] pt0 not None, do
 
 def nsquared(const double[:,:,::1] h not None, const double[:,:,::1] SA not None, const double[:,:,::1] ct not None, const double[:,:,::1] p not None, const double[:,::1] lat not None, double[:,:,::1] out=None):
     if out is None:
-        out = numpy.empty((h.shape[0], h.shape[1], h.shape[2]), dtype=h.dtype)
+        out = numpy.empty((h.shape[0] - 1, h.shape[1], h.shape[2]), dtype=h.dtype)
+    assert h.shape[0] == p.shape[0] and h.shape[1] == p.shape[1] and h.shape[2] == p.shape[2]
+    assert h.shape[0] == SA.shape[0] and h.shape[1] == SA.shape[1] and h.shape[2] == SA.shape[2]
+    assert h.shape[0] == ct.shape[0] and h.shape[1] == ct.shape[1] and h.shape[2] == ct.shape[2]
+    assert h.shape[1] == lat.shape[0] and h.shape[2] == lat.shape[1]
+    assert out.shape[0] == p.shape[0] - 1 and out.shape[1] == p.shape[1] and out.shape[2] == p.shape[2]
     cgsw_nsquared_3d(h.shape[2], h.shape[1], h.shape[0], &h[0,0,0], &SA[0,0,0], &ct[0,0,0], &p[0,0,0], &lat[0,0], &out[0,0,0])
