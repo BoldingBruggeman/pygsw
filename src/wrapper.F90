@@ -1,6 +1,6 @@
 module pygsw_
    use iso_c_binding, only: c_double, c_double_complex, c_int, c_char, C_NULL_CHAR, c_f_pointer, c_loc, c_ptr
-   use gsw_mod_toolbox, only : gsw_SA_from_SP, gsw_pt0_from_t, gsw_ct_from_pt, gsw_rho_alpha_beta, gsw_grav, gsw_rho
+   use gsw_mod_toolbox, only : gsw_SA_from_SP, gsw_pt0_from_t, gsw_ct_from_pt, gsw_pt_from_ct, gsw_rho_alpha_beta, gsw_grav, gsw_rho
    use gsw_mod_teos10_constants, only: db2pa
 
    implicit none
@@ -26,6 +26,13 @@ contains
       real(c_double), intent(in)         :: sa(n), pt(n)
       real(c_double), intent(inout)      :: ct(n)
       ct(:) = gsw_ct_from_pt(sa, pt)
+   end subroutine
+
+   subroutine cgsw_pt_from_ct(n, sa, ct, pt) bind(c)
+      integer(c_int), intent(in), value  :: n
+      real(c_double), intent(in)         :: sa(n), ct(n)
+      real(c_double), intent(inout)      :: pt(n)
+      pt(:) = gsw_pt_from_ct(sa, ct)
    end subroutine
 
    subroutine cgsw_rho(n, sa, ct, p, rho) bind(c)
