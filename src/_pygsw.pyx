@@ -8,6 +8,7 @@ import numpy
 cdef extern void cgsw_sa_from_sp(int n, double* sp, double* p, double* long, double* lat, double* sa)
 cdef extern void cgsw_pt0_from_t(int n, double* sa, double* t, double* p, double* pt)
 cdef extern void cgsw_ct_from_pt(int n, double* sa, double* pt, double* ct)
+cdef extern void cgsw_rho(int n, double* sa, double* ct, double* p, double* rho)
 cdef extern void cgsw_nsquared_3d(int nx, int ny, int nz, double* h, double* sa, double* ct, double* p, double* lat, double* n2)
 
 def calculate_pt(lon, lat, z, t, sp):
@@ -35,6 +36,12 @@ def ct_from_pt(const double[::1] SA not None, const double[::1] pt0 not None, do
     if out is None:
         out = numpy.empty_like(pt0)
     cgsw_ct_from_pt(out.shape[0], &SA[0], &pt0[0], &out[0])
+    return out
+
+def rho(const double[::1] SA not None, const double[::1] ct not None, const double[::1] p not None, double[::1] out=None):
+    if out is None:
+        out = numpy.empty_like(SA)
+    cgsw_rho(out.shape[0], &SA[0], &ct[0], &p[0], &out[0])
     return out
 
 def nsquared(const double[:,:,::1] h not None, const double[:,:,::1] SA not None, const double[:,:,::1] ct not None, const double[:,:,::1] p not None, const double[:,::1] lat not None, double[:,:,::1] out=None):
