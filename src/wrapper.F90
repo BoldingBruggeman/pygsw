@@ -42,9 +42,10 @@ contains
       rho(:) = gsw_rho(sa, ct, p)
    end subroutine
 
-   subroutine cgsw_nsquared_3d(nx, ny, nz, h, sa, ct, p, lat, n2) bind(c)
+   subroutine cgsw_nsquared_3d(nx, ny, nz, mask, h, sa, ct, p, lat, n2) bind(c)
       ! This routine is essentially a 3D version of 1D (k-only) gsw_nsquared
       integer(c_int), intent(in), value :: nx, ny, nz
+      integer(c_int), intent(in) :: mask(nx, ny)
       real(c_double), intent(in) :: h(nx, ny, nz), sa(nx, ny, nz), ct(nx, ny, nz), p(nx, ny, nz), lat(nx, ny)
       real(c_double), intent(inout) :: n2(nx, ny, nz-1)
 
@@ -56,17 +57,19 @@ contains
       allocate (rho_mid(nx, ny), alpha_mid(nx, ny), beta_mid(nx, ny), grav_mid(nx, ny))
 
       do k=1,nz-1
-         h_sum_inv = 1._c_double / (h(:,:,k) + h(:,:,k+1))
-         grav_mid(:,:) = h_sum_inv * (h(:,:,k+1) * gsw_grav(lat(:,:), p(:,:,k)) + h(:,:,k) * gsw_grav(lat(:,:), p(:,:,k+1)))
-         dsa(:,:) = (sa(:,:,k+1) - sa(:,:,k))
-         sa_mid(:,:) = h_sum_inv * (h(:,:,k+1) * sa(:,:,k) + h(:,:,k) * sa(:,:,k+1))
-         dct(:,:) = (ct(:,:,k+1) - ct(:,:,k))
-         ct_mid(:,:) = h_sum_inv * (h(:,:,k+1) * ct(:,:,k) + h(:,:,k) * ct(:,:,k+1))
-         dp(:,:) = (p(:,:,k+1) - p(:,:,k))
-         p_mid(:,:) = h_sum_inv * (h(:,:,k+1) * p(:,:,k) + h(:,:,k) * p(:,:,k+1))
-         call gsw_rho_alpha_beta(sa_mid,ct_mid,p_mid,rho_mid,alpha_mid,beta_mid)
-         n2(:,:,k) = (grav_mid**2) * (rho_mid/(db2pa*dp)) * &
-                      (beta_mid*dsa - alpha_mid*dct)
+         where (mask /= 0)
+            h_sum_inv = 1._c_double / (h(:,:,k) + h(:,:,k+1))
+            grav_mid(:,:) = h_sum_inv * (h(:,:,k+1) * gsw_grav(lat(:,:), p(:,:,k)) + h(:,:,k) * gsw_grav(lat(:,:), p(:,:,k+1)))
+            dsa(:,:) = (sa(:,:,k+1) - sa(:,:,k))
+            sa_mid(:,:) = h_sum_inv * (h(:,:,k+1) * sa(:,:,k) + h(:,:,k) * sa(:,:,k+1))
+            dct(:,:) = (ct(:,:,k+1) - ct(:,:,k))
+            ct_mid(:,:) = h_sum_inv * (h(:,:,k+1) * ct(:,:,k) + h(:,:,k) * ct(:,:,k+1))
+            dp(:,:) = (p(:,:,k+1) - p(:,:,k))
+            p_mid(:,:) = h_sum_inv * (h(:,:,k+1) * p(:,:,k) + h(:,:,k) * p(:,:,k+1))
+         end where
+         call gsw_rho_alpha_beta(sa_mid, ct_mid, p_mid, rho_mid, alpha_mid, beta_mid)
+         where (mask /= 0) n2(:,:,k) = (grav_mid**2) * (rho_mid / (db2pa * dp)) * &
+                         (beta_mid * dsa - alpha_mid * dct)
       end do
    end subroutine
 
