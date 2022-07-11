@@ -14,7 +14,7 @@ set(Python_FIND_STRATEGY LOCATION)
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/_pygsw.c
-  COMMAND ${Python3_EXECUTABLE} -m cython src/_pygsw.pyx
+  COMMAND cython src/_pygsw.pyx
   MAIN_DEPENDENCY src/_pygsw.pyx
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
