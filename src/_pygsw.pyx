@@ -5,12 +5,12 @@ cimport cython
 cimport numpy
 import numpy
 
-cdef extern void cgsw_sa_from_sp(int n, double* sp, double* p, double* long, double* lat, double* sa)
-cdef extern void cgsw_pt0_from_t(int n, double* sa, double* t, double* p, double* pt)
-cdef extern void cgsw_ct_from_pt(int n, double* sa, double* pt, double* ct)
-cdef extern void cgsw_pt_from_ct(int n, double* sa, double* ct, double* pt)
-cdef extern void cgsw_rho(int n, double* sa, double* ct, double* p, double* rho)
-cdef extern void cgsw_nsquared_3d(int nx, int ny, int nz, int* mask, double* h, double* sa, double* ct, double* p, double* lat, double* n2)
+cdef extern void cgsw_sa_from_sp(int n, const double* sp, const double* p, const double* long, const double* lat, double* sa)
+cdef extern void cgsw_pt0_from_t(int n, const double* sa, const double* t, const double* p, double* pt)
+cdef extern void cgsw_ct_from_pt(int n, const double* sa, const double* pt, double* ct)
+cdef extern void cgsw_pt_from_ct(int n, const double* sa, const double* ct, double* pt)
+cdef extern void cgsw_rho(int n, const double* sa, const double* ct, const double* p, double* rho)
+cdef extern void cgsw_nsquared_3d(int nx, int ny, int nz, const int* mask, const double* h, const double* sa, const double* ct, const double* p, const double* lat, double* n2)
 
 def calculate_pt(lon, lat, z, t, sp):
     cdef numpy.ndarray lon_, lat_, p, t_, sp_, pt0, ct
