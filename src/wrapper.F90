@@ -1,9 +1,11 @@
 module pygsw_
    use iso_c_binding, only: c_double, c_double_complex, c_int, c_char, C_NULL_CHAR, c_f_pointer, c_loc, c_ptr
-   use gsw_mod_toolbox, only : gsw_SA_from_SP, gsw_pt0_from_t, gsw_ct_from_pt, gsw_pt_from_ct, gsw_rho_alpha_beta, gsw_grav, gsw_rho
+   use gsw_mod_toolbox, only : gsw_SA_from_SP, gsw_pt0_from_t, gsw_ct_from_pt, gsw_pt_from_ct, gsw_grav !, gsw_rho, gsw_rho_alpha_beta
    use gsw_mod_teos10_constants, only: db2pa
 
    implicit none
+
+   private
 
 contains
 
@@ -39,7 +41,8 @@ contains
       integer(c_int), intent(in), value  :: n
       real(c_double), intent(in)         :: sa(n), ct(n), p(n)
       real(c_double), intent(inout)      :: rho(n)
-      rho(:) = gsw_rho(sa, ct, p)
+      !rho(:) = gsw_rho(sa, ct, p)
+      rho(:) = 1.0_c_double / gsw_specvol(sa, ct, p)
    end subroutine
 
    subroutine cgsw_nsquared_3d(nx, ny, nz, mask, h, sa, ct, p, lat, n2) bind(c)
@@ -50,16 +53,17 @@ contains
       real(c_double), intent(inout) :: n2(nx, ny, nz-1)
 
       real(c_double), allocatable, dimension(:,:) :: dsa, sa_mid, dct, ct_mid, dp, p_mid, h_sum_inv
-      real(c_double), allocatable, dimension(:,:) :: rho_mid, alpha_mid, beta_mid, grav_mid
+      real(c_double), allocatable, dimension(:,:) :: rho_mid, alpha_mid, beta_mid !, grav_mid
+      real(c_double), parameter :: grav_mid = 9.81_c_double
       integer :: k
 
       allocate (dsa(nx, ny), sa_mid(nx, ny), dct(nx, ny), ct_mid(nx, ny), dp(nx, ny), p_mid(nx, ny), h_sum_inv(nx, ny))
-      allocate (rho_mid(nx, ny), alpha_mid(nx, ny), beta_mid(nx, ny), grav_mid(nx, ny))
+      allocate (rho_mid(nx, ny), alpha_mid(nx, ny), beta_mid(nx, ny)) !, grav_mid(nx, ny))
 
       do k=1,nz-1
          where (mask /= 0)
             h_sum_inv = 1._c_double / (h(:,:,k) + h(:,:,k+1))
-            grav_mid(:,:) = h_sum_inv * (h(:,:,k+1) * gsw_grav(lat(:,:), p(:,:,k)) + h(:,:,k) * gsw_grav(lat(:,:), p(:,:,k+1)))
+            !grav_mid(:,:) = h_sum_inv * (h(:,:,k+1) * gsw_grav(lat(:,:), p(:,:,k)) + h(:,:,k) * gsw_grav(lat(:,:), p(:,:,k+1)))
             dsa(:,:) = (sa(:,:,k+1) - sa(:,:,k))
             sa_mid(:,:) = h_sum_inv * (h(:,:,k+1) * sa(:,:,k) + h(:,:,k) * sa(:,:,k+1))
             dct(:,:) = (ct(:,:,k+1) - ct(:,:,k))
@@ -72,5 +76,8 @@ contains
                          (beta_mid * dsa - alpha_mid * dct)
       end do
    end subroutine
+
+#include "../../../extern/pygsw/extern/GSW-Fortran/toolbox/gsw_rho_alpha_beta.f90"
+#include "../../../extern/pygsw/extern/GSW-Fortran/toolbox/gsw_specvol.f90"
 
 end module pygsw_
