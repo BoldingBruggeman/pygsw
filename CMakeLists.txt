@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 
-project(pygsw LANGUAGES Fortran)
+project(pygsw LANGUAGES Fortran C)
 
 set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "Debug file extension" FORCE)
 
