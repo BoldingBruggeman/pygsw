@@ -77,7 +77,7 @@ contains
       end do
    end subroutine
 
-#include "../../../extern/pygsw/extern/GSW-Fortran/toolbox/gsw_rho_alpha_beta.f90"
-#include "../../../extern/pygsw/extern/GSW-Fortran/toolbox/gsw_specvol.f90"
+#include "../extern/GSW-Fortran/toolbox/gsw_rho_alpha_beta.f90"
+#include "../extern/GSW-Fortran/toolbox/gsw_specvol.f90"
 
 end module pygsw_
