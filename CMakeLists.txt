@@ -13,13 +13,13 @@ target_link_libraries(cgsw gsw_static)
 set(Python_FIND_STRATEGY LOCATION)
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/_pygsw.c
-  COMMAND cython src/_pygsw.pyx
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/_pygsw.c
+  COMMAND cython src/_pygsw.pyx -o ${CMAKE_CURRENT_BINARY_DIR}/_pygsw.c
   MAIN_DEPENDENCY src/_pygsw.pyx
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-Python3_add_library(_pygsw MODULE src/_pygsw.c)
+Python3_add_library(_pygsw MODULE ${CMAKE_CURRENT_BINARY_DIR}/_pygsw.c)
 target_link_libraries(_pygsw PRIVATE cgsw Python3::NumPy)
 
 # Build wheel
