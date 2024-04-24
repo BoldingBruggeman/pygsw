@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.15)
 
 project(pygsw LANGUAGES Fortran C)
 
@@ -10,7 +10,6 @@ add_library(cgsw pygsw/__init__.py pygsw/__main__.py src/wrapper.F90)
 target_link_libraries(cgsw gsw_static)
 
 # Find target Python interpreter.
-set(Python_FIND_STRATEGY LOCATION)
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/_pygsw.c
