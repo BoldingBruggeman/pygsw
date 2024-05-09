@@ -19,7 +19,7 @@ find_package(Python3 COMPONENTS Interpreter Development NumPy)
 add_custom_command(OUTPUT _pygsw.c
   COMMENT "Creating ${CMAKE_CURRENT_BINARY_DIR}/_pygsw.c from ${CMAKE_CURRENT_SOURCE_DIR}/src/_pygsw.pyx"
   COMMAND cython "${CMAKE_CURRENT_SOURCE_DIR}/src/_pygsw.pyx" -o "${CMAKE_CURRENT_BINARY_DIR}/_pygsw.c"
-  DEPENDS _pygsw.pyx
+  DEPENDS src/_pygsw.pyx
   VERBATIM
 )
 
