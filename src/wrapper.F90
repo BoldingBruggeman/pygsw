@@ -52,7 +52,7 @@ contains
       real(c_double), intent(in) :: h(nx, ny, nz), sa(nx, ny, nz), ct(nx, ny, nz), p(nx, ny, nz), lat(nx, ny)
       real(c_double), intent(inout) :: n2(nx, ny, nz-1)
 
-      real(c_double), allocatable, dimension(:,:) :: dsa, sa_mid, dct, ct_mid, dp, p_mid, hfrac
+      real(c_double), allocatable, dimension(:,:) :: dsa, sa_mid, dct, ct_mid, dp, p_mid, step
       real(c_double), allocatable, dimension(:,:) :: rho_mid, alpha_mid, beta_mid !, grav_mid
       real(c_double), parameter :: grav_mid = 9.81_c_double
       integer :: k
