@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(pygsw LANGUAGES Fortran C)
 
-if (MSVC)
+if (WIN32 AND "${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
   add_compile_options(/libs:static)
 endif()
 
